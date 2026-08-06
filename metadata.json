@@ -1,0 +1,6 @@
+{
+  "name": "DevCraft Studio",
+  "description": "An open-source developer & creator toolbox featuring a GitHub README architect, code snippet snapshot generator, JSON & JWT workbench, CSS palette studio, and AI coding assistant.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
