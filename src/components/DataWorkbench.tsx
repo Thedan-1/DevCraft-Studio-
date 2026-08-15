@@ -79,7 +79,8 @@ export const DataWorkbench: React.FC = () => {
       } else if (val === null) {
         type = 'null | any';
       } else if (type === 'object') {
-        type = `${key.charAt(0).toUpperCase() + key.slice(1)}Type`;
+        // 嵌套对象直接用 Record<string, any>，避免生成未定义的悬空类型名
+        type = 'Record<string, any>';
       }
       code += `  ${key}: ${type};\n`;
     }
