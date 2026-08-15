@@ -29,10 +29,10 @@
 
 ```bash
 # 克隆仓库
-git clone https://github.com/your-username/devcraft-studio.git
+git clone https://github.com/Thedan-1/DevCraft-Studio-.git
 
 # 进入目录
-cd devcraft-studio
+cd DevCraft-Studio-
 
 # 安装项目依赖
 npm install
