@@ -89,6 +89,16 @@ export const DataWorkbench: React.FC = () => {
   };
 
   // JWT Decoder
+  const decodeJwtPart = (part: string) => {
+    // JWT uses base64url without padding; atob only accepts the standard
+    // alphabet. Decode UTF-8 payloads so non-ASCII claims remain readable.
+    const normalized = part.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=');
+    const binary = atob(padded);
+    const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+    return JSON.parse(new TextDecoder().decode(bytes));
+  };
+
   const handleDecodeJwt = () => {
     try {
       setJwtStatus(null);
@@ -97,8 +107,8 @@ export const DataWorkbench: React.FC = () => {
         setJwtStatus('Invalid JWT structure. JWTs must contain header, payload, and signature.');
         return;
       }
-      const headerObj = JSON.parse(atob(parts[0]));
-      const payloadObj = JSON.parse(atob(parts[1]));
+      const headerObj = decodeJwtPart(parts[0]);
+      const payloadObj = decodeJwtPart(parts[1]);
 
       setJwtHeader(JSON.stringify(headerObj, null, 2));
       setJwtPayload(JSON.stringify(payloadObj, null, 2));
@@ -106,9 +116,13 @@ export const DataWorkbench: React.FC = () => {
       if (payloadObj.exp) {
         const expDate = new Date(payloadObj.exp * 1000);
         const isExpired = expDate < new Date();
-        setJwtStatus(isExpired ? `Expired on ${expDate.toLocaleString()}` : `Valid until ${expDate.toLocaleString()}`);
+        setJwtStatus(
+          isExpired
+            ? `Decoded; expired on ${expDate.toLocaleString()} (signature not verified)`
+            : `Decoded; expires ${expDate.toLocaleString()} (signature not verified)`,
+        );
       } else {
-        setJwtStatus('Valid payload (No exp claim found)');
+        setJwtStatus('Decoded (signature not verified; no exp claim found)');
       }
     } catch (e: any) {
       setJwtStatus(`Failed to decode JWT: ${e.message}`);
